@@ -453,6 +453,63 @@
     }
     .cta-btns { position: relative; z-index: 1; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 
+    /* ── REGISTER ── */
+    #register {
+      padding: 110px 0;
+      background: linear-gradient(180deg, var(--black), var(--dark) 50%, var(--black));
+      border-top: 1px solid var(--border);
+    }
+    .reg-wrap {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    }
+    .reg-list {
+      list-style: none; display: flex; flex-direction: column; gap: 16px; margin-top: 28px;
+    }
+    .reg-list li {
+      font-family: 'Noto Sans Hebrew', sans-serif; font-size: 1rem;
+      color: var(--cream2); display: flex; align-items: center; gap: 12px;
+    }
+    .reg-check {
+      color: var(--gold); font-weight: 700; font-size: 1.1rem; flex-shrink: 0;
+    }
+    .reg-box {
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 48px 40px; text-align: center; position: relative;
+    }
+    .reg-box::before {
+      content: ''; position: absolute; top: 0; right: 0; width: 55%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold));
+    }
+    .reg-box::after {
+      content: ''; position: absolute; bottom: 0; left: 0; width: 55%; height: 2px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+    }
+    .reg-box-head { margin-bottom: 32px; }
+    .reg-box-icon { font-size: 2.5rem; color: var(--gold); text-shadow: 0 0 30px var(--gold-glow); margin-bottom: 14px; }
+    .reg-box-title { font-family: 'Cinzel', serif; font-size: 1.25rem; color: var(--cream); margin-bottom: 8px; }
+    .reg-box-sub { font-family: 'Noto Sans Hebrew', sans-serif; font-size: .85rem; color: var(--muted); }
+    .reg-main-btn {
+      clip-path: none !important; width: 100%; justify-content: center;
+      font-size: 1.05rem !important; padding: 17px 24px !important;
+    }
+    .reg-divider {
+      display: flex; align-items: center; gap: 12px; margin: 20px 0;
+    }
+    .reg-divider::before, .reg-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    .reg-divider span {
+      font-family: 'Noto Sans Hebrew', sans-serif; font-size: .8rem; color: var(--muted);
+    }
+    .reg-login-btn {
+      clip-path: none !important; width: 100%; justify-content: center;
+    }
+    .reg-fine {
+      margin-top: 22px;
+      font-family: 'Noto Sans Hebrew', sans-serif; font-size: .75rem;
+      color: var(--muted); line-height: 1.6;
+    }
+
     /* ── FOOTER ── */
     footer {
       padding: 36px 48px; border-top: 1px solid var(--border);
@@ -491,7 +548,7 @@
       nav { padding: 16px 24px; }
       .n-links { display: none; }
       .wrap { padding: 0 24px; }
-      .ab-grid, .hw-grid { grid-template-columns: 1fr; gap: 48px; }
+      .ab-grid, .hw-grid, .reg-wrap { grid-template-columns: 1fr; gap: 48px; }
       .feat-grid { grid-template-columns: 1fr; }
       .soc-grid { grid-template-columns: repeat(2,1fr); }
       footer { flex-direction: column; gap: 14px; text-align: center; }
@@ -511,6 +568,7 @@
     <li><a href="#features">פיצ'רים</a></li>
     <li><a href="#howto">איך משחקים</a></li>
     <li><a href="#community">קהילה</a></li>
+    <li><a href="#register">הרשמה</a></li>
     <li><a href="https://game.medieval.co.il/" class="n-play">כנס למשחק</a></li>
   </ul>
 </nav>
@@ -792,6 +850,46 @@
   </div>
 </section>
 
+<!-- REGISTER SECTION -->
+<section id="register">
+  <div class="wrap">
+    <div class="reg-wrap rev">
+      <div class="reg-text">
+        <span class="s-tag">◆ &nbsp; הרשמה חינמית</span>
+        <h2 class="s-title">מוכן להצטרף?</h2>
+        <div class="gold-rule">
+          <div class="gold-rule-line"></div>
+          <div class="gold-rule-dia">◆</div>
+        </div>
+        <ul class="reg-list">
+          <li><span class="reg-check">✓</span> הרשמה בחינם — ללא כרטיס אשראי</li>
+          <li><span class="reg-check">✓</span> אין מה להוריד — פועל בדפדפן</li>
+          <li><span class="reg-check">✓</span> קהילה ישראלית פעילה בעברית</li>
+          <li><span class="reg-check">✓</span> שרת מקומי — פינג נמוך, חוויה חלקה</li>
+          <li><span class="reg-check">✓</span> עדכונים ותוכן חדש כל הזמן</li>
+        </ul>
+      </div>
+      <div class="reg-box">
+        <div class="reg-box-head">
+          <div class="reg-box-icon">⚔</div>
+          <h3 class="reg-box-title">הצטרף לעולם Medieval</h3>
+          <p class="reg-box-sub">לחץ כדי להירשם — לוקח פחות מדקה</p>
+        </div>
+        <a href="https://game.medieval.co.il/" class="btn btn-gold reg-main-btn">
+          ⚔ &nbsp; הרשמה חינמית — עכשיו
+        </a>
+        <div class="reg-divider"><span>כבר רשום?</span></div>
+        <a href="https://game.medieval.co.il/" class="btn btn-ghost reg-login-btn">
+          כניסה לחשבון קיים
+        </a>
+        <div class="reg-fine">
+          <span>🔒 מאובטח &nbsp;|&nbsp; 🇮🇱 שרת ישראלי &nbsp;|&nbsp; ✓ חינמי לגמרי</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- FINAL CTA -->
 <section id="cta">
   <div class="wrap">
@@ -807,7 +905,7 @@
       </h2>
       <p class="cta-sub">הצטרף לקהילה הישראלית — בחינם, עכשיו, בדפדפן שלך.</p>
       <div class="cta-btns">
-        <a href="https://game.medieval.co.il/" class="btn btn-gold" style="font-size:1.05rem;padding:17px 48px;">⚔&nbsp;&nbsp;כנס לעולם Medieval</a>
+        <a href="#register" class="btn btn-gold" style="font-size:1.05rem;padding:17px 48px;">⚔&nbsp;&nbsp;הרשמה חינמית</a>
         <a href="#community" class="btn btn-ghost">הצטרף לקהילה</a>
       </div>
     </div>
