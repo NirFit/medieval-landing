@@ -3,845 +3,489 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Medieval — משחק תפקידים בדפדפן</title>
+  <title>Medieval — הממלכה מחכה לך</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Frank+Ruhl+Libre:opsz,wght@5..120,300;5..120,400;5..120,700;5..120,900&family=Noto+Sans+Hebrew:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --black:     #060402;
-      --deep:      #0C0906;
-      --dark:      #141008;
-      --surface:   #1C1610;
-      --raised:    #22190F;
-      --gold:      #C9A227;
-      --gold-lt:   #E0BC45;
-      --gold-dk:   #7A5C0E;
-      --gold-glow: rgba(201,162,39,.25);
-      --red:       #7A1515;
-      --cream:     #EFE5D0;
-      --cream2:    #C4B49A;
-      --muted:     #7A6A50;
-      --border:    rgba(201,162,39,.18);
+      --gold:    #C9A227;
+      --gold-lt: #E8C94A;
+      --gold-dk: #7A5C0E;
+      --cream:   #F0E5D0;
+      --cream2:  #B8A88A;
+      --dark:    #0A0705;
+      --border:  rgba(201,162,39,.2);
     }
 
     html { scroll-behavior: smooth; }
-
     body {
-      background: var(--black);
+      background: var(--dark);
       color: var(--cream);
-      font-family: 'Frank Ruhl Libre', serif;
+      font-family: 'Heebo', sans-serif;
       overflow-x: hidden;
-      direction: rtl;
     }
 
     /* ── GRAIN ── */
     body::after {
-      content: '';
-      position: fixed; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-      background-size: 200px;
-      opacity: .035;
-      pointer-events: none;
-      z-index: 9999;
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px; opacity: .03;
     }
 
-    /* ── SCROLL BAR ── */
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: var(--black); }
-    ::-webkit-scrollbar-thumb { background: var(--gold-dk); }
-
-    /* ── PARTICLES ── */
-    #cv {
-      position: fixed; top: 0; left: 0;
-      width: 100%; height: 100%;
-      pointer-events: none; z-index: 1;
-    }
-
-    /* ── PROGRESS BAR ── */
-    #progress {
-      position: fixed; top: 0; left: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--red), var(--gold));
-      width: 0%; z-index: 200;
-      transition: width .1s linear;
-    }
-
-    /* ── NAV ── */
+    /* ── NAVBAR ── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      padding: 22px 48px;
+      padding: 18px 48px;
       display: flex; align-items: center; justify-content: space-between;
-      transition: background .4s, border-color .4s;
-      border-bottom: 1px solid transparent;
+      transition: background .4s, border .4s;
     }
     nav.on {
-      background: rgba(6,4,2,.92);
-      backdrop-filter: blur(12px);
-      border-bottom-color: var(--border);
+      background: rgba(10,7,5,.93);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
     }
-    .n-logo {
-      font-family: 'Cinzel Decorative', serif;
-      font-size: 1.35rem; color: var(--gold);
-      text-decoration: none; letter-spacing: 3px;
-      text-shadow: 0 0 24px var(--gold-glow);
-    }
-    .n-links { display: flex; gap: 28px; list-style: none; align-items: center; }
-    .n-links a {
-      font-family: 'Noto Sans Hebrew', sans-serif;
+    .nav-logo img { height: 36px; filter: drop-shadow(0 0 10px rgba(201,162,39,.4)); }
+    .nav-right { display: flex; align-items: center; gap: 32px; }
+    .nav-right a {
       font-size: .85rem; color: var(--cream2); text-decoration: none;
-      transition: color .25s; letter-spacing: .3px;
+      letter-spacing: .3px; transition: color .25s;
     }
-    .n-links a:hover { color: var(--gold); }
-    .n-play {
-      border: 1px solid var(--gold) !important;
-      color: var(--gold) !important;
-      padding: 7px 20px !important;
-      font-size: .82rem !important;
+    .nav-right a:hover { color: var(--gold); }
+    .nav-cta {
+      padding: 8px 22px; border: 1px solid var(--gold);
+      color: var(--gold) !important; font-size: .82rem !important;
       transition: background .25s, color .25s !important;
     }
-    .n-play:hover { background: var(--gold) !important; color: var(--black) !important; }
+    .nav-cta:hover { background: var(--gold) !important; color: #000 !important; }
 
     /* ── HERO ── */
     #hero {
       position: relative; min-height: 100vh;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      text-align: center; overflow: hidden; z-index: 2;
+      display: flex; align-items: flex-end; justify-content: center;
+      overflow: hidden;
     }
-    .h-bg {
+    .hero-img {
+      position: absolute; inset: 0;
+      background: url('https://assets.medieval.co.il/assets/login-bg.jpg') center center / cover no-repeat;
+    }
+    /* Multi-layer overlay: subtle top darkening + heavy bottom for text */
+    .hero-overlay {
       position: absolute; inset: 0;
       background:
-        radial-gradient(ellipse 90% 55% at 50% 90%, rgba(122,21,21,.18) 0%, transparent 65%),
-        radial-gradient(ellipse 60% 40% at 50% 40%, rgba(201,162,39,.04) 0%, transparent 60%),
-        linear-gradient(180deg, #060402 0%, #100B05 55%, #060402 100%);
+        linear-gradient(to bottom,
+          rgba(10,7,5,.55) 0%,
+          rgba(10,7,5,.1)  35%,
+          rgba(10,7,5,.15) 55%,
+          rgba(10,7,5,.85) 75%,
+          rgba(10,7,5,1)   100%
+        );
     }
-    /* Castle silhouette */
-    .h-castle {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      height: 220px; opacity: .06; pointer-events: none;
+    /* Gold shimmer rim at horizon */
+    .hero-rim {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold-dk), var(--gold), var(--gold-dk), transparent);
+      opacity: .6;
     }
-    .h-inner { position: relative; z-index: 3; padding: 0 24px; }
 
-    .h-eyebrow {
-      font-family: 'Noto Sans Hebrew', sans-serif;
-      font-size: .72rem; letter-spacing: 5px;
-      color: var(--gold); margin-bottom: 18px;
-      opacity: 0; animation: up .7s .2s forwards;
+    .hero-content {
+      position: relative; z-index: 2;
+      text-align: center; padding: 0 24px 100px;
+      width: 100%; max-width: 860px;
     }
-    .h-ornament {
-      display: flex; align-items: center; justify-content: center;
-      gap: 10px; margin-bottom: 20px;
-      opacity: 0; animation: up .7s .35s forwards;
+    .hero-logo {
+      margin-bottom: 24px;
+      opacity: 0; animation: up .8s .2s forwards;
     }
-    .h-ornament-bar { width: 60px; height: 1px; background: var(--gold-dk); }
-    .h-ornament-dia { color: var(--gold); font-size: .6rem; letter-spacing: 8px; }
+    .hero-logo img { height: 72px; filter: drop-shadow(0 0 24px rgba(201,162,39,.5)); }
 
-    .h-title {
+    .hero-h1 {
       font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(4.5rem, 13vw, 10rem);
-      font-weight: 900; line-height: .9;
-      color: var(--cream);
-      text-shadow:
-        0 0 60px rgba(201,162,39,.3),
-        0 0 120px rgba(201,162,39,.12),
-        0 2px 0 rgba(0,0,0,.8);
-      opacity: 0; animation: up 1s .5s forwards;
-      position: relative;
+      font-size: clamp(2.6rem, 8vw, 6rem);
+      font-weight: 900; color: var(--cream);
+      line-height: 1; letter-spacing: -1px;
+      text-shadow: 0 2px 40px rgba(0,0,0,.8), 0 0 80px rgba(201,162,39,.2);
+      opacity: 0; animation: up .9s .4s forwards;
     }
-    .h-title span { color: var(--gold); }
-    /* shimmer sweep */
-    .h-title::after {
-      content: 'Medieval';
-      position: absolute; inset: 0;
-      background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.15) 50%, transparent 60%);
-      background-size: 200% 100%;
-      -webkit-background-clip: text; background-clip: text;
-      color: transparent;
-      animation: shimmer 4s 2s infinite;
+    .hero-h1 span { color: var(--gold); }
+
+    .hero-tagline {
+      font-size: clamp(1rem, 2.2vw, 1.3rem);
+      color: var(--cream2); margin-top: 18px; letter-spacing: 1px;
+      font-weight: 300;
+      opacity: 0; animation: up .9s .6s forwards;
     }
-    @keyframes shimmer {
-      0%   { background-position: 150% center; }
-      100% { background-position: -50% center; }
+    .hero-tagline strong { color: var(--cream); font-weight: 500; }
+
+    .hero-pills {
+      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+      margin-top: 22px;
+      opacity: 0; animation: up .9s .7s forwards;
+    }
+    .pill {
+      padding: 5px 14px; border: 1px solid rgba(201,162,39,.35);
+      font-size: .78rem; color: var(--cream2); letter-spacing: .5px;
     }
 
-    .h-sub {
-      font-size: clamp(1rem, 2.2vw, 1.4rem);
-      color: var(--cream2); max-width: 560px; margin: 26px auto 0;
-      line-height: 1.75; font-weight: 300;
-      opacity: 0; animation: up 1s .7s forwards;
-    }
-    .h-btns {
-      display: flex; gap: 14px; justify-content: center;
-      margin-top: 44px; flex-wrap: wrap;
-      opacity: 0; animation: up 1s .9s forwards;
+    .hero-btns {
+      display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+      margin-top: 36px;
+      opacity: 0; animation: up .9s .85s forwards;
     }
 
     .btn {
-      display: inline-flex; align-items: center; gap: 10px;
-      font-family: 'Noto Sans Hebrew', sans-serif;
-      font-size: .95rem; font-weight: 600;
-      text-decoration: none; letter-spacing: .5px;
-      transition: all .3s; cursor: pointer;
-      padding: 15px 36px; border: none;
-      clip-path: polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'Heebo', sans-serif; font-weight: 700;
+      font-size: 1rem; text-decoration: none; cursor: pointer; border: none;
+      padding: 15px 38px; transition: all .3s;
     }
     .btn-gold {
-      background: var(--gold); color: var(--black);
-      box-shadow: 0 0 0 rgba(201,162,39,0);
+      background: var(--gold); color: #0A0705;
+      clip-path: polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);
     }
     .btn-gold:hover {
       background: var(--gold-lt);
-      box-shadow: 0 0 40px rgba(201,162,39,.35), 0 0 80px rgba(201,162,39,.15);
+      box-shadow: 0 0 40px rgba(201,162,39,.45);
       transform: translateY(-2px);
     }
     .btn-ghost {
       background: transparent; color: var(--cream);
-      border: 1px solid rgba(255,255,255,.15);
-      clip-path: polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);
+      border: 1px solid rgba(255,255,255,.2);
+      clip-path: polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);
     }
-    .btn-ghost:hover {
-      border-color: var(--gold); color: var(--gold);
-      transform: translateY(-2px);
-    }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
 
-    .h-scroll {
+    .hero-scroll {
       position: absolute; bottom: 36px; left: 50%;
       transform: translateX(-50%);
       display: flex; flex-direction: column; align-items: center; gap: 6px;
-      color: var(--muted);
-      font-family: 'Noto Sans Hebrew', sans-serif;
-      font-size: .7rem; letter-spacing: 2px;
+      color: var(--cream2); font-size: .7rem; letter-spacing: 2px;
       opacity: 0; animation: fadein 1s 1.6s forwards;
     }
-    .h-scroll-line {
-      width: 1px; height: 36px;
+    .scroll-bar {
+      width: 1px; height: 34px;
       background: linear-gradient(to bottom, var(--gold-dk), transparent);
-      animation: breathe 2s infinite;
+      animation: pulse 2s infinite;
     }
-
-    /* ── SECTIONS ── */
-    section { position: relative; z-index: 2; }
-    .wrap { max-width: 1160px; margin: 0 auto; padding: 0 40px; }
-
-    .s-tag {
-      font-family: 'Noto Sans Hebrew', sans-serif;
-      font-size: .72rem; letter-spacing: 4px; color: var(--gold);
-      margin-bottom: 14px; display: block;
-    }
-    .s-title {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(1.7rem, 3.8vw, 2.9rem);
-      font-weight: 700; color: var(--cream);
-      line-height: 1.2; margin-bottom: 22px;
-    }
-    .s-desc {
-      font-size: 1.05rem; color: var(--cream2);
-      line-height: 1.9; font-weight: 300;
-    }
-
-    .gold-rule {
-      display: flex; align-items: center; gap: 12px; margin: 18px 0;
-    }
-    .gold-rule-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--gold-dk), transparent); }
-    .gold-rule-dia { color: var(--gold); font-size: .55rem; }
-
-    /* ── ABOUT ── */
-    #about {
-      padding: 120px 0;
-      background: linear-gradient(180deg, var(--black), var(--deep) 50%, var(--black));
-    }
-    .ab-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 80px; align-items: center; }
-
-    .ab-card {
-      background: var(--surface);
-      border: 1px solid var(--border); padding: 44px;
-      position: relative; overflow: hidden;
-    }
-    .ab-card::before {
-      content: ''; position: absolute; top: 0; right: 0; width: 55%; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--gold));
-    }
-    .ab-card::after {
-      content: ''; position: absolute; bottom: 0; left: 0; width: 55%; height: 2px;
-      background: linear-gradient(90deg, var(--gold), transparent);
-    }
-    .ab-quote {
-      font-size: 1.05rem; color: var(--cream2);
-      line-height: 1.9; font-style: italic; font-weight: 300;
-    }
-    .ab-quote-sig {
-      display: flex; align-items: center; gap: 12px; margin-top: 24px;
-    }
-    .ab-quote-ico {
-      width: 38px; height: 38px; background: var(--raised);
-      border: 1px solid var(--border); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--gold); font-size: 1rem;
-    }
-    .ab-sig-name { font-family: 'Noto Sans Hebrew', sans-serif; font-size: .85rem; color: var(--cream); }
-    .ab-sig-role { font-family: 'Noto Sans Hebrew', sans-serif; font-size: .75rem; color: var(--muted); }
-
-    .ab-stats { display: flex; gap: 0; margin-top: 36px; border-top: 1px solid var(--border); padding-top: 32px; }
-    .ab-stat { flex: 1; text-align: center; }
-    .ab-stat + .ab-stat { border-right: 1px solid var(--border); }
-    .ab-stat-n { font-family: 'Cinzel', serif; font-size: 2.2rem; font-weight: 700; color: var(--gold); display: block; }
-    .ab-stat-l { font-family: 'Noto Sans Hebrew', sans-serif; font-size: .75rem; color: var(--muted); margin-top: 4px; letter-spacing: .5px; }
-
-    /* ── LORE BANNER ── */
-    #lore {
-      padding: 90px 0; text-align: center;
-      background: var(--dark);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      overflow: hidden; position: relative;
-    }
-    #lore::before {
-      content: '⚔'; position: absolute;
-      font-size: 28rem; color: rgba(201,162,39,.025);
-      top: 50%; left: 50%; transform: translate(-50%,-50%);
-      pointer-events: none; user-select: none;
-    }
-    .lore-q {
-      font-family: 'Frank Ruhl Libre', serif;
-      font-size: clamp(1.35rem, 2.8vw, 2.1rem);
-      font-weight: 700; color: var(--cream);
-      max-width: 760px; margin: 0 auto; line-height: 1.65;
-      position: relative;
-    }
-    .lore-q em { color: var(--gold); font-style: normal; }
 
     /* ── FEATURES ── */
-    #features { padding: 110px 0; }
-    .feat-head { text-align: center; margin-bottom: 64px; }
-    .feat-head .gold-rule { justify-content: center; }
-    .feat-head .gold-rule-line { max-width: 90px; }
-
+    #features {
+      padding: 80px 0 90px;
+      background: var(--dark);
+    }
+    .features-wrap {
+      max-width: 1100px; margin: 0 auto; padding: 0 40px;
+    }
     .feat-grid {
       display: grid; grid-template-columns: repeat(3,1fr); gap: 2px;
+      margin-top: 0;
     }
-    .feat-card {
-      background: var(--dark); padding: 48px 40px;
-      position: relative; overflow: hidden; transition: background .35s;
+    .feat {
+      padding: 44px 36px; background: #100D08;
+      border-top: 2px solid transparent;
+      transition: border-color .35s, background .35s;
+      position: relative; overflow: hidden;
     }
-    .feat-card::after {
-      content: ''; position: absolute; inset-inline-start: 0; top: 0; bottom: 0;
-      width: 2px;
-      background: linear-gradient(to bottom, transparent, var(--gold-dk), transparent);
-      opacity: 0; transition: opacity .35s;
-    }
-    .feat-card:hover { background: var(--surface); }
-    .feat-card:hover::after { opacity: 1; }
-    .feat-card:hover .feat-icon { color: var(--gold-lt); transform: translateY(-3px); }
-
-    .feat-icon {
-      font-size: 2rem; color: var(--gold); margin-bottom: 26px;
-      display: block; transition: color .35s, transform .35s;
-    }
+    .feat:hover { background: #171208; border-top-color: var(--gold); }
+    .feat-icon { font-size: 2.2rem; margin-bottom: 18px; display: block; }
     .feat-title {
-      font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 600;
-      color: var(--cream); margin-bottom: 12px; letter-spacing: .3px;
+      font-family: 'Cinzel', serif; font-size: 1.05rem;
+      font-weight: 600; color: var(--cream); margin-bottom: 10px;
     }
-    .feat-desc { font-size: .93rem; color: var(--cream2); line-height: 1.75; font-weight: 300; }
-    .feat-num {
-      position: absolute; bottom: 16px; left: 24px;
-      font-family: 'Cinzel', serif; font-size: 3rem; font-weight: 700;
-      color: var(--gold-dk); opacity: .12; pointer-events: none;
-    }
+    .feat-text { font-size: .93rem; color: var(--cream2); line-height: 1.7; font-weight: 300; }
 
-    /* ── HOW TO ── */
-    #howto { padding: 110px 0; }
-    .hw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-    .hw-steps { list-style: none; display: flex; flex-direction: column; }
-    .hw-step {
-      display: flex; gap: 22px; align-items: flex-start;
-      padding: 30px 0; border-bottom: 1px solid rgba(201,162,39,.09);
-      transition: border-color .3s;
+    /* ── SCREENSHOT STRIP ── */
+    #strip {
+      position: relative; overflow: hidden; height: 360px;
     }
-    .hw-step:hover { border-bottom-color: rgba(201,162,39,.3); }
-    .hw-step:last-child { border-bottom: none; }
-    .hw-n {
-      font-family: 'Cinzel', serif; font-size: 2.2rem; font-weight: 700;
-      color: var(--gold-dk); opacity: .4; line-height: 1; min-width: 36px;
+    .strip-img {
+      width: 100%; height: 100%;
+      background: url('https://assets.medieval.co.il/assets/login-bg.jpg') center 30% / cover no-repeat;
+      filter: brightness(.7) saturate(1.1);
+      transform: scale(1.04);
+      transition: transform 8s ease;
     }
-    .hw-step:hover .hw-n { opacity: .7; color: var(--gold); }
-    .hw-h {
-      font-family: 'Cinzel', serif; font-size: 1rem;
-      color: var(--cream); margin-bottom: 7px;
+    #strip:hover .strip-img { transform: scale(1); }
+    .strip-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg,
+        rgba(10,7,5,.9) 0%, rgba(10,7,5,.4) 40%,
+        rgba(10,7,5,.4) 60%, rgba(10,7,5,.9) 100%);
+      display: flex; align-items: center; justify-content: center;
     }
-    .hw-p { font-size: .93rem; color: var(--muted); line-height: 1.7; }
-
-    .hw-box {
-      background: var(--surface); border: 1px solid var(--border);
-      padding: 50px 40px; text-align: center; position: relative;
+    .strip-text {
+      text-align: center; position: relative; z-index: 1;
     }
-    .hw-box::before {
-      content: ''; position: absolute; top: 0; right: 0; width: 50%; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--gold));
+    .strip-quote {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.4rem, 3.5vw, 2.4rem);
+      font-weight: 700; color: var(--cream);
+      line-height: 1.5; max-width: 700px;
     }
-    .hw-box::after {
-      content: ''; position: absolute; bottom: 0; left: 0; width: 50%; height: 2px;
-      background: linear-gradient(90deg, var(--gold), transparent);
+    .strip-quote em { color: var(--gold); font-style: normal; }
+    .strip-line {
+      width: 60px; height: 1px;
+      background: var(--gold); margin: 18px auto 0; opacity: .6;
     }
-    .hw-sword { font-size: 3rem; color: var(--gold); text-shadow: 0 0 30px var(--gold-glow); }
-    .hw-box-title { font-family: 'Cinzel', serif; font-size: 1.3rem; color: var(--cream); margin: 18px 0 10px; }
-    .hw-box-sub { font-family: 'Noto Sans Hebrew', sans-serif; font-size: .85rem; color: var(--muted); margin-bottom: 36px; }
-    .live-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-family: 'Noto Sans Hebrew', sans-serif; font-size: .75rem;
-      color: #4CAF50; letter-spacing: 2px; margin-bottom: 28px;
-    }
-    .live-dot {
-      width: 7px; height: 7px; background: #4CAF50;
-      border-radius: 50%; animation: breathe 2s infinite;
-    }
-
-    /* ── COMMUNITY ── */
-    #community {
-      padding: 100px 0;
-      background: linear-gradient(180deg, var(--black), var(--deep));
-    }
-    .comm-head { text-align: center; margin-bottom: 56px; }
-    .comm-sub { font-size: .95rem; color: var(--cream2); margin-top: 14px; font-weight: 300; }
-
-    .soc-grid {
-      display: grid; grid-template-columns: repeat(4,1fr); gap: 2px;
-      max-width: 840px; margin: 0 auto;
-    }
-    .soc-card {
-      display: flex; flex-direction: column; align-items: center;
-      justify-content: center; gap: 10px;
-      padding: 38px 20px; background: var(--dark);
-      text-decoration: none; color: var(--cream2);
-      font-family: 'Noto Sans Hebrew', sans-serif; font-size: .82rem;
-      transition: all .3s;
-      border-bottom: 2px solid transparent;
-    }
-    .soc-card:hover { background: var(--surface); color: var(--cream); }
-    .soc-card:hover svg { transform: scale(1.1); }
-    .soc-card svg { width: 28px; height: 28px; transition: transform .3s; }
-
-    .soc-card.dc:hover { border-color: #5865F2; }
-    .soc-card.dc:hover svg { color: #5865F2; }
-    .soc-card.fb:hover { border-color: #1877F2; }
-    .soc-card.fb:hover svg { color: #1877F2; }
-    .soc-card.ig:hover { border-color: #E1306C; }
-    .soc-card.ig:hover svg { color: #E1306C; }
-    .soc-card.yt:hover { border-color: #FF0000; }
-    .soc-card.yt:hover svg { color: #FF0000; }
-
-    /* ── CTA ── */
-    #cta { padding: 140px 0; text-align: center; overflow: hidden; }
-    #cta::before {
-      content: ''; position: absolute; inset: 0;
-      background:
-        radial-gradient(ellipse 65% 45% at 50% 50%, rgba(122,21,21,.12) 0%, transparent 70%),
-        radial-gradient(ellipse 35% 25% at 50% 50%, rgba(201,162,39,.05) 0%, transparent 60%);
-    }
-    .cta-title {
-      font-family: 'Cinzel', serif; position: relative; z-index: 1;
-      font-size: clamp(1.7rem, 4.5vw, 3.2rem);
-      font-weight: 700; color: var(--cream); line-height: 1.3;
-      margin-bottom: 22px;
-    }
-    .cta-sub {
-      font-size: 1.05rem; color: var(--cream2); margin-bottom: 50px;
-      font-weight: 300; position: relative; z-index: 1;
-    }
-    .cta-btns { position: relative; z-index: 1; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 
     /* ── REGISTER ── */
     #register {
-      padding: 110px 0;
-      background: linear-gradient(180deg, var(--black), var(--dark) 50%, var(--black));
+      padding: 90px 40px;
+      background: #0D0A06;
       border-top: 1px solid var(--border);
     }
-    .reg-wrap {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    .reg-inner {
+      max-width: 760px; margin: 0 auto; text-align: center;
     }
-    .reg-list {
-      list-style: none; display: flex; flex-direction: column; gap: 16px; margin-top: 28px;
+    .reg-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid rgba(201,162,39,.35);
+      padding: 6px 18px; margin-bottom: 28px;
+      font-size: .78rem; color: var(--gold); letter-spacing: 2px;
     }
-    .reg-list li {
-      font-family: 'Noto Sans Hebrew', sans-serif; font-size: 1rem;
-      color: var(--cream2); display: flex; align-items: center; gap: 12px;
+    .reg-dot { width: 6px; height: 6px; background: #4CAF50; border-radius: 50%; animation: pulse 2s infinite; }
+    .reg-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.6rem, 4vw, 2.8rem);
+      font-weight: 700; color: var(--cream); line-height: 1.25;
+      margin-bottom: 14px;
     }
-    .reg-check {
-      color: var(--gold); font-weight: 700; font-size: 1.1rem; flex-shrink: 0;
+    .reg-sub { font-size: 1rem; color: var(--cream2); margin-bottom: 38px; font-weight: 300; }
+
+    .reg-card {
+      background: #141008; border: 1px solid var(--border);
+      padding: 48px 40px; position: relative; overflow: hidden;
     }
-    .reg-box {
-      background: var(--surface); border: 1px solid var(--border);
-      padding: 48px 40px; text-align: center; position: relative;
-    }
-    .reg-box::before {
-      content: ''; position: absolute; top: 0; right: 0; width: 55%; height: 2px;
+    .reg-card::before {
+      content: ''; position: absolute; top: 0; right: 0; width: 50%; height: 2px;
       background: linear-gradient(90deg, transparent, var(--gold));
     }
-    .reg-box::after {
-      content: ''; position: absolute; bottom: 0; left: 0; width: 55%; height: 2px;
+    .reg-card::after {
+      content: ''; position: absolute; bottom: 0; left: 0; width: 50%; height: 2px;
       background: linear-gradient(90deg, var(--gold), transparent);
     }
-    .reg-box-head { margin-bottom: 32px; }
-    .reg-box-icon { font-size: 2.5rem; color: var(--gold); text-shadow: 0 0 30px var(--gold-glow); margin-bottom: 14px; }
-    .reg-box-title { font-family: 'Cinzel', serif; font-size: 1.25rem; color: var(--cream); margin-bottom: 8px; }
-    .reg-box-sub { font-family: 'Noto Sans Hebrew', sans-serif; font-size: .85rem; color: var(--muted); }
-    .reg-main-btn {
-      clip-path: none !important; width: 100%; justify-content: center;
-      font-size: 1.05rem !important; padding: 17px 24px !important;
+
+    .reg-checks {
+      display: flex; gap: 28px; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 36px;
     }
-    .reg-divider {
-      display: flex; align-items: center; gap: 12px; margin: 20px 0;
+    .reg-check {
+      display: flex; align-items: center; gap: 7px;
+      font-size: .88rem; color: var(--cream2);
     }
-    .reg-divider::before, .reg-divider::after {
-      content: ''; flex: 1; height: 1px; background: var(--border);
+    .reg-check span:first-child { color: var(--gold); font-weight: 700; }
+
+    .reg-btns {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 22px;
     }
-    .reg-divider span {
-      font-family: 'Noto Sans Hebrew', sans-serif; font-size: .8rem; color: var(--muted);
+    .reg-btns .btn-gold { font-size: 1.05rem; padding: 16px 44px; }
+    .reg-btns .btn-ghost { font-size: .92rem; }
+
+    .reg-trust {
+      font-size: .75rem; color: var(--cream2);
+      opacity: .6; letter-spacing: .3px;
     }
-    .reg-login-btn {
-      clip-path: none !important; width: 100%; justify-content: center;
+
+    /* ── SOCIAL ── */
+    #social {
+      padding: 60px 40px;
+      border-top: 1px solid var(--border);
     }
-    .reg-fine {
-      margin-top: 22px;
-      font-family: 'Noto Sans Hebrew', sans-serif; font-size: .75rem;
-      color: var(--muted); line-height: 1.6;
+    .soc-wrap { max-width: 600px; margin: 0 auto; text-align: center; }
+    .soc-label {
+      font-size: .75rem; letter-spacing: 3px;
+      color: var(--cream2); margin-bottom: 24px; display: block;
     }
+    .soc-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .soc-btn {
+      display: flex; align-items: center; gap: 9px;
+      padding: 11px 24px; background: #141008;
+      border: 1px solid var(--border);
+      text-decoration: none; color: var(--cream2);
+      font-size: .85rem; transition: all .3s;
+    }
+    .soc-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .soc-btn svg { width: 18px; height: 18px; }
 
     /* ── FOOTER ── */
     footer {
-      padding: 36px 48px; border-top: 1px solid var(--border);
+      padding: 28px 48px; border-top: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
-      position: relative; z-index: 2;
     }
-    .f-logo { font-family: 'Cinzel Decorative', serif; font-size: 1.05rem; color: var(--gold-dk); }
-    .f-copy { font-family: 'Noto Sans Hebrew', sans-serif; font-size: .78rem; color: var(--muted); }
-    .f-links { display: flex; gap: 22px; }
-    .f-links a {
-      font-family: 'Noto Sans Hebrew', sans-serif; font-size: .78rem;
-      color: var(--muted); text-decoration: none; transition: color .25s;
-    }
-    .f-links a:hover { color: var(--gold); }
+    .f-logo { font-family: 'Cinzel Decorative', serif; font-size: .95rem; color: var(--gold-dk); }
+    .f-copy { font-size: .75rem; color: #4a3e2a; }
+    .f-link { font-size: .75rem; color: #4a3e2a; text-decoration: none; transition: color .25s; }
+    .f-link:hover { color: var(--gold); }
 
-    /* ── REVEAL ── */
-    .rev {
-      opacity: 0; transform: translateY(36px);
-      transition: opacity .75s ease, transform .75s ease;
-    }
-    .rev.on { opacity: 1; transform: none; }
-
-    /* ── KEYFRAMES ── */
+    /* ── ANIMATIONS ── */
     @keyframes up {
-      from { opacity: 0; transform: translateY(28px); }
+      from { opacity: 0; transform: translateY(24px); }
       to   { opacity: 1; transform: none; }
     }
     @keyframes fadein { to { opacity: 1; } }
-    @keyframes breathe {
-      0%,100% { opacity: .35; }
-      50% { opacity: 1; }
+    @keyframes pulse { 0%,100%{opacity:.35} 50%{opacity:1} }
+
+    .rev {
+      opacity: 0; transform: translateY(32px);
+      transition: opacity .7s ease, transform .7s ease;
     }
+    .rev.on { opacity: 1; transform: none; }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 860px) {
-      nav { padding: 16px 24px; }
-      .n-links { display: none; }
-      .wrap { padding: 0 24px; }
-      .ab-grid, .hw-grid, .reg-wrap { grid-template-columns: 1fr; gap: 48px; }
+    @media(max-width:768px){
+      nav { padding: 14px 20px; }
+      .nav-right a:not(.nav-cta) { display: none; }
       .feat-grid { grid-template-columns: 1fr; }
-      .soc-grid { grid-template-columns: repeat(2,1fr); }
-      footer { flex-direction: column; gap: 14px; text-align: center; }
+      footer { flex-direction: column; gap: 10px; text-align: center; }
+      .reg-card { padding: 36px 24px; }
+      .reg-checks { gap: 16px; }
     }
   </style>
 </head>
 <body>
 
-<canvas id="cv"></canvas>
-<div id="progress"></div>
-
 <!-- NAV -->
 <nav id="nav">
-  <a href="https://game.medieval.co.il/" class="n-logo">Medieval</a>
-  <ul class="n-links">
-    <li><a href="#about">על המשחק</a></li>
-    <li><a href="#features">פיצ'רים</a></li>
-    <li><a href="#howto">איך משחקים</a></li>
-    <li><a href="#community">קהילה</a></li>
-    <li><a href="#register">הרשמה</a></li>
-    <li><a href="https://game.medieval.co.il/" class="n-play">כנס למשחק</a></li>
-  </ul>
+  <a href="#" class="nav-logo">
+    <img src="https://assets.medieval.co.il/assets/logo.png" alt="Medieval">
+  </a>
+  <div class="nav-right">
+    <a href="#features">המשחק</a>
+    <a href="#register">הרשמה</a>
+    <a href="#social">קהילה</a>
+    <a href="https://game.medieval.co.il/" class="nav-cta">כניסה לממלכה</a>
+  </div>
 </nav>
 
 <!-- HERO -->
 <section id="hero">
-  <div class="h-bg"></div>
+  <div class="hero-img"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-rim"></div>
 
-  <!-- Castle silhouette SVG -->
-  <svg class="h-castle" viewBox="0 0 1440 220" fill="currentColor" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-    <path fill="var(--cream)" d="
-      M0,220 L0,140 L40,140 L40,100 L60,100 L60,140 L120,140 L120,80
-      L140,80 L140,60 L160,60 L160,80 L180,80 L180,140 L240,140 L240,100
-      L260,100 L260,140 L300,140 L300,180 L340,180 L340,120 L360,120
-      L360,90 L380,70 L400,90 L400,120 L420,120 L420,180 L480,180
-      L480,140 L540,140 L540,100 L560,100 L560,80 L580,80 L580,60
-      L600,60 L600,40 L620,40 L620,20 L640,20 L640,0 L660,0 L660,20
-      L680,20 L680,40 L700,40 L700,60 L720,60 L720,80 L740,80 L740,60
-      L760,60 L760,40 L780,20 L800,20 L800,40 L820,60 L820,80 L840,80
-      L840,100 L860,100 L860,140 L920,140 L920,180 L980,180 L980,120
-      L1000,120 L1000,90 L1020,70 L1040,90 L1040,120 L1060,120 L1060,180
-      L1100,180 L1100,140 L1140,140 L1140,80 L1160,80 L1160,60 L1180,60
-      L1180,80 L1200,80 L1200,140 L1260,140 L1260,100 L1280,100 L1280,140
-      L1320,140 L1320,80 L1340,80 L1360,60 L1380,60 L1380,80 L1400,80
-      L1400,140 L1440,140 L1440,220 Z
-    "/>
-  </svg>
-
-  <div class="h-inner">
-    <p class="h-eyebrow">▲ &nbsp; משחק תפקידים ישראלי &nbsp; ▲</p>
-    <div class="h-ornament">
-      <div class="h-ornament-bar"></div>
-      <div class="h-ornament-dia">◆ &thinsp; ◆ &thinsp; ◆</div>
-      <div class="h-ornament-bar"></div>
+  <div class="hero-content">
+    <div class="hero-logo">
+      <img src="https://assets.medieval.co.il/assets/logo.png" alt="Medieval">
     </div>
-    <h1 class="h-title">Medieval</h1>
-    <p class="h-sub">
-      עולם פנטזיה של ימי הביניים — נבנה בישראל, משוחק בעברית.<br>
-      לחום. בנה. שלוט. &nbsp;<strong>בחינם.</strong>
+
+    <h1 class="hero-h1">הממלכה<br><span>מחכה לך</span></h1>
+
+    <p class="hero-tagline">
+      <strong>קרבות טקטיים.</strong> &nbsp;ציוד נדיר. &nbsp;<strong>בריתות מסוכנות.</strong>
     </p>
-    <div class="h-btns">
-      <a href="https://game.medieval.co.il/" class="btn btn-gold">⚔&nbsp;&nbsp;כנס לעולם — חינם</a>
-      <a href="#about" class="btn btn-ghost">גלה עוד</a>
+
+    <div class="hero-pills">
+      <div class="pill">🇮🇱 שרת ישראלי</div>
+      <div class="pill">🆓 חינם לחלוטין</div>
+      <div class="pill">💻 ישירות בדפדפן</div>
+      <div class="pill">⚔ RPG עברי</div>
+    </div>
+
+    <div class="hero-btns">
+      <a href="https://game.medieval.co.il/" class="btn btn-gold">⚔ &nbsp;צור דמות חדשה</a>
+      <a href="#features" class="btn btn-ghost">גלה את העולם</a>
     </div>
   </div>
 
-  <div class="h-scroll">
-    <div class="h-scroll-line"></div>
-    <span>גלול למטה</span>
-  </div>
-</section>
-
-<!-- ABOUT -->
-<section id="about">
-  <div class="wrap">
-    <div class="ab-grid">
-
-      <div class="rev">
-        <span class="s-tag">◆ &nbsp; על המשחק</span>
-        <h2 class="s-title">משחק דפדפן<br>ישראלי אמיתי</h2>
-        <div class="gold-rule">
-          <div class="gold-rule-line"></div>
-          <div class="gold-rule-dia">◆</div>
-        </div>
-        <p class="s-desc">
-          Medieval הוא משחק תפקידים בדפדפן שנבנה בישראל — לא עוד גרסה מתורגמת של משחק זר.
-          אין צורך בהורדות, אין תשלומים מחייבים.
-          רק אתה, הממלכה, והבחירות שתעשה.
-        </p>
-        <p class="s-desc" style="margin-top: 16px;">
-          בנה את הדמות שלך מאפס, לחום בעולם שחי ולא נעצר,
-          ומצא את מקומך בין שחקנים ישראלים שמחכים לך עכשיו.
-        </p>
-        <a href="https://game.medieval.co.il/" class="btn btn-gold" style="display:inline-flex;margin-top:36px;">⚔&nbsp;&nbsp;הצטרף עכשיו</a>
-      </div>
-
-      <div class="rev" style="transition-delay:.2s">
-        <div class="ab-card">
-          <p class="ab-quote">
-            "לא מדובר רק במשחק. מדובר בקהילה ישראלית שחיה ונושמת ביחד — לוחמים, בונים, סוחרים.
-            כולם בעברית, כולם במערכת שמרגישה כמו בית."
-          </p>
-          <div class="ab-quote-sig">
-            <div class="ab-quote-ico">⚔</div>
-            <div>
-              <div class="ab-sig-name">שחקן Medieval</div>
-              <div class="ab-sig-role">קהילת המשחק</div>
-            </div>
-          </div>
-          <div class="ab-stats">
-            <div class="ab-stat">
-              <span class="ab-stat-n">חינם</span>
-              <div class="ab-stat-l">לשחק</div>
-            </div>
-            <div class="ab-stat">
-              <span class="ab-stat-n">0</span>
-              <div class="ab-stat-l">הורדות</div>
-            </div>
-            <div class="ab-stat">
-              <span class="ab-stat-n">24/7</span>
-              <div class="ab-stat-l">פעיל</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- LORE BANNER -->
-<section id="lore">
-  <div class="wrap">
-    <p class="lore-q rev">
-      "הממלכה לא מחכה לאף אחד.<br>
-      השאלה היחידה היא — <em>באיזה צד תעמוד?</em>"
-    </p>
+  <div class="hero-scroll">
+    <div class="scroll-bar"></div>
+    <span>גלול</span>
   </div>
 </section>
 
 <!-- FEATURES -->
 <section id="features">
-  <div class="wrap">
-    <div class="feat-head rev">
-      <span class="s-tag">◆ &nbsp; מה מחכה לך</span>
-      <h2 class="s-title">עולם מלא אפשרויות</h2>
-      <div class="gold-rule" style="justify-content:center">
-        <div class="gold-rule-line" style="max-width:80px; background:linear-gradient(270deg,var(--gold-dk),transparent)"></div>
-        <div class="gold-rule-dia">◆</div>
-        <div class="gold-rule-line" style="max-width:80px;"></div>
-      </div>
-    </div>
-
+  <div class="features-wrap">
     <div class="feat-grid">
 
-      <div class="feat-card rev">
+      <div class="feat rev">
         <span class="feat-icon">⚔</span>
-        <h3 class="feat-title">לחימה אסטרטגית</h3>
-        <p class="feat-desc">בנה לוחם עם שילוב ייחודי של כישורים, נשק ושריון. כל קרב הוא החלטה — תכנן, תקוף, נצח.</p>
-        <div class="feat-num">01</div>
+        <h3 class="feat-title">קרבות טקטיים</h3>
+        <p class="feat-text">לא רק כוח גולמי — אסטרטגיה, ציוד ותזמון. כל קרב הוא חידה שצריך לפתור.</p>
       </div>
 
-      <div class="feat-card rev" style="transition-delay:.1s">
+      <div class="feat rev" style="transition-delay:.12s">
         <span class="feat-icon">🏰</span>
         <h3 class="feat-title">בנה ממלכה</h3>
-        <p class="feat-desc">מחנה קטן הופך לעיר, עיר הופכת לממלכה. בנה, ייצר, ושלוט על משאבים שאחרים יחמדו.</p>
-        <div class="feat-num">02</div>
+        <p class="feat-text">מחנה קטן הופך לעיר מבוצרת. בנה, ייצר משאבים, שלוט על שטחים.</p>
       </div>
 
-      <div class="feat-card rev" style="transition-delay:.2s">
+      <div class="feat rev" style="transition-delay:.24s">
         <span class="feat-icon">🛡</span>
-        <h3 class="feat-title">גילדות וברית</h3>
-        <p class="feat-desc">הצטרף לגילדה ישראלית או פתח שלך. מלחמות שטח, ברית אסטרטגיות, קהילה שמגבה.</p>
-        <div class="feat-num">03</div>
-      </div>
-
-      <div class="feat-card rev" style="transition-delay:.3s">
-        <span class="feat-icon">💰</span>
-        <h3 class="feat-title">כלכלה חיה</h3>
-        <p class="feat-desc">שוק שנשלט על ידי שחקנים — מחירים עולים ויורדים בזמן אמת. סחר חכם, עושר אפשרי.</p>
-        <div class="feat-num">04</div>
-      </div>
-
-      <div class="feat-card rev" style="transition-delay:.4s">
-        <span class="feat-icon">📜</span>
-        <h3 class="feat-title">קווסטים ומשימות</h3>
-        <p class="feat-desc">עשרות משימות שמרחיבות את העולם ומספרות סיפור. לכל שחקן יש את המסע שלו.</p>
-        <div class="feat-num">05</div>
-      </div>
-
-      <div class="feat-card rev" style="transition-delay:.5s">
-        <span class="feat-icon">🌍</span>
-        <h3 class="feat-title">עולם פתוח</h3>
-        <p class="feat-desc">מפה ענקית עם אזורים שנפתחים בהתקדמות. כל פינה מספרת סיפור. תוכן חדש כל הזמן.</p>
-        <div class="feat-num">06</div>
+        <h3 class="feat-title">בריתות מסוכנות</h3>
+        <p class="feat-text">גילדות ישראליות, מלחמות שטח, בריתות שמתפרקות. הפוליטיקה חלק מהמשחק.</p>
       </div>
 
     </div>
   </div>
 </section>
 
-<!-- HOW TO PLAY -->
-<section id="howto">
-  <div class="wrap">
-    <div class="hw-grid">
-
-      <div class="rev">
-        <span class="s-tag">◆ &nbsp; איך מתחילים</span>
-        <h2 class="s-title">שלושה צעדים<br>לעולם אחר</h2>
-        <div class="gold-rule">
-          <div class="gold-rule-line"></div>
-          <div class="gold-rule-dia">◆</div>
-        </div>
-        <ul class="hw-steps">
-          <li class="hw-step">
-            <div class="hw-n">01</div>
-            <div>
-              <h3 class="hw-h">הירשם — בחינם לגמרי</h3>
-              <p class="hw-p">אין כרטיס אשראי, אין הורדות. נכנסים לאתר, יוצרים חשבון, ומתחילים ברגע.</p>
-            </div>
-          </li>
-          <li class="hw-step">
-            <div class="hw-n">02</div>
-            <div>
-              <h3 class="hw-h">בחר את הדמות שלך</h3>
-              <p class="hw-p">לוחם? אציל? סוחר? כל מסלול פותח דרכים שונות. הבחירה שלך, ההשלכות שלך.</p>
-            </div>
-          </li>
-          <li class="hw-step">
-            <div class="hw-n">03</div>
-            <div>
-              <h3 class="hw-h">היכנס לקהילה</h3>
-              <p class="hw-p">מצא גילדה, הצטרף לשרת הקהילה, ותגלה שיש כאן אנשים שמחכים לך.</p>
-            </div>
-          </li>
-        </ul>
-      </div>
-
-      <div class="rev" style="transition-delay:.2s">
-        <div class="live-badge">
-          <div class="live-dot"></div>
-          פעיל עכשיו
-        </div>
-        <div class="hw-box">
-          <div class="hw-sword">⚔</div>
-          <div class="hw-box-title">Medieval</div>
-          <div class="hw-box-sub">משחק תפקידים בדפדפן &nbsp;|&nbsp; ישראל</div>
-          <a href="https://game.medieval.co.il/" class="btn btn-gold" style="clip-path:none;width:100%;justify-content:center;">
-            ⚔&nbsp;&nbsp;כנס עכשיו — חינם
-          </a>
-        </div>
-      </div>
-
+<!-- IMAGE STRIP -->
+<section id="strip">
+  <div class="strip-img"></div>
+  <div class="strip-overlay">
+    <div class="strip-text rev">
+      <p class="strip-quote">
+        "עולם שלם ממתין לך —<br>
+        <em>בדפדפן, בעברית, בחינם.</em>"
+      </p>
+      <div class="strip-line"></div>
     </div>
   </div>
 </section>
 
-<!-- COMMUNITY -->
-<section id="community">
-  <div class="wrap">
-    <div class="comm-head rev">
-      <span class="s-tag">◆ &nbsp; קהילה ישראלית</span>
-      <h2 class="s-title">אנחנו בכל מקום</h2>
-      <div class="gold-rule" style="justify-content:center">
-        <div class="gold-rule-line" style="max-width:80px; background:linear-gradient(270deg,var(--gold-dk),transparent)"></div>
-        <div class="gold-rule-dia">◆</div>
-        <div class="gold-rule-line" style="max-width:80px;"></div>
-      </div>
-      <p class="comm-sub">עקוב, הצטרף לשיחה, ותהיה חלק מהממלכה</p>
+<!-- REGISTER -->
+<section id="register">
+  <div class="reg-inner">
+    <div class="reg-badge rev">
+      <div class="reg-dot"></div>
+      <span>המשחק פעיל עכשיו</span>
     </div>
 
-    <div class="soc-grid rev">
+    <h2 class="reg-title rev">מוכן לצאת למסע?</h2>
+    <p class="reg-sub rev">הרשמה לוקחת דקה. ציוד נדיר מחכה.</p>
 
-      <!-- Discord -->
-      <a href="https://game.medieval.co.il/" class="soc-card dc">
+    <div class="reg-card rev">
+      <div class="reg-checks">
+        <div class="reg-check"><span>✓</span><span>ללא הורדה</span></div>
+        <div class="reg-check"><span>✓</span><span>ללא תשלום</span></div>
+        <div class="reg-check"><span>✓</span><span>שרת ישראלי</span></div>
+        <div class="reg-check"><span>✓</span><span>קהילה בעברית</span></div>
+      </div>
+      <div class="reg-btns">
+        <a href="https://game.medieval.co.il/" class="btn btn-gold">⚔ &nbsp;צור דמות חדשה</a>
+        <a href="https://game.medieval.co.il/" class="btn btn-ghost">יש לי חשבון — כניסה</a>
+      </div>
+      <p class="reg-trust">🔒 מאובטח &nbsp;·&nbsp; 🇮🇱 נבנה בישראל &nbsp;·&nbsp; © 2026 Medieval</p>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL -->
+<section id="social">
+  <div class="soc-wrap">
+    <span class="soc-label rev">◆ &nbsp; עקבו אחרינו &nbsp; ◆</span>
+    <div class="soc-row rev" style="transition-delay:.1s">
+
+      <a href="https://game.medieval.co.il/" class="soc-btn">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.1 18.08.11 18.1.127 18.113a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
         Discord
       </a>
 
-      <!-- Facebook -->
-      <a href="https://www.facebook.com/search/pages/?q=medieval+game+%D7%99%D7%A9%D7%A8%D7%90%D7%9C" target="_blank" class="soc-card fb">
+      <a href="https://www.facebook.com/search/pages/?q=medieval+game" target="_blank" class="soc-btn">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
         Facebook
       </a>
 
-      <!-- Instagram -->
-      <a href="https://www.instagram.com/explore/tags/medievalgame/" target="_blank" class="soc-card ig">
+      <a href="https://www.instagram.com/explore/tags/medievalgame/" target="_blank" class="soc-btn">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
         Instagram
       </a>
 
-      <!-- YouTube -->
-      <a href="https://www.youtube.com/results?search_query=medieval+game+israel" target="_blank" class="soc-card yt">
+      <a href="https://www.youtube.com/results?search_query=medieval+game+israel" target="_blank" class="soc-btn">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
         YouTube
       </a>
@@ -850,157 +494,35 @@
   </div>
 </section>
 
-<!-- REGISTER SECTION -->
-<section id="register">
-  <div class="wrap">
-    <div class="reg-wrap rev">
-      <div class="reg-text">
-        <span class="s-tag">◆ &nbsp; הרשמה חינמית</span>
-        <h2 class="s-title">מוכן להצטרף?</h2>
-        <div class="gold-rule">
-          <div class="gold-rule-line"></div>
-          <div class="gold-rule-dia">◆</div>
-        </div>
-        <ul class="reg-list">
-          <li><span class="reg-check">✓</span> הרשמה בחינם — ללא כרטיס אשראי</li>
-          <li><span class="reg-check">✓</span> אין מה להוריד — פועל בדפדפן</li>
-          <li><span class="reg-check">✓</span> קהילה ישראלית פעילה בעברית</li>
-          <li><span class="reg-check">✓</span> שרת מקומי — פינג נמוך, חוויה חלקה</li>
-          <li><span class="reg-check">✓</span> עדכונים ותוכן חדש כל הזמן</li>
-        </ul>
-      </div>
-      <div class="reg-box">
-        <div class="reg-box-head">
-          <div class="reg-box-icon">⚔</div>
-          <h3 class="reg-box-title">הצטרף לעולם Medieval</h3>
-          <p class="reg-box-sub">לחץ כדי להירשם — לוקח פחות מדקה</p>
-        </div>
-        <a href="https://game.medieval.co.il/" class="btn btn-gold reg-main-btn">
-          ⚔ &nbsp; הרשמה חינמית — עכשיו
-        </a>
-        <div class="reg-divider"><span>כבר רשום?</span></div>
-        <a href="https://game.medieval.co.il/" class="btn btn-ghost reg-login-btn">
-          כניסה לחשבון קיים
-        </a>
-        <div class="reg-fine">
-          <span>🔒 מאובטח &nbsp;|&nbsp; 🇮🇱 שרת ישראלי &nbsp;|&nbsp; ✓ חינמי לגמרי</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FINAL CTA -->
-<section id="cta">
-  <div class="wrap">
-    <div class="rev">
-      <div class="gold-rule" style="justify-content:center;margin-bottom:44px">
-        <div class="gold-rule-line" style="max-width:60px;background:linear-gradient(270deg,var(--gold-dk),transparent)"></div>
-        <div class="gold-rule-dia" style="letter-spacing:10px">◆ ◆ ◆</div>
-        <div class="gold-rule-line" style="max-width:60px"></div>
-      </div>
-      <h2 class="cta-title">
-        הממלכה לא מחכה לך.<br>
-        אבל השחקנים — כן.
-      </h2>
-      <p class="cta-sub">הצטרף לקהילה הישראלית — בחינם, עכשיו, בדפדפן שלך.</p>
-      <div class="cta-btns">
-        <a href="#register" class="btn btn-gold" style="font-size:1.05rem;padding:17px 48px;">⚔&nbsp;&nbsp;הרשמה חינמית</a>
-        <a href="#community" class="btn btn-ghost">הצטרף לקהילה</a>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- FOOTER -->
 <footer>
   <div class="f-logo">Medieval</div>
-  <div class="f-copy">© 2025 Medieval &nbsp;|&nbsp; נבנה בישראל 🇮🇱</div>
-  <div class="f-links">
-    <a href="https://game.medieval.co.il/">המשחק</a>
-    <a href="#about">אודות</a>
-    <a href="#features">פיצ'רים</a>
-    <a href="#community">קהילה</a>
-  </div>
+  <div class="f-copy">© 2026 Medieval · כל הזכויות שמורות · נבנה בישראל 🇮🇱</div>
+  <a href="https://game.medieval.co.il/" class="f-link">game.medieval.co.il</a>
 </footer>
 
 <script>
-// ── PROGRESS BAR ──
-const prog = document.getElementById('progress');
-window.addEventListener('scroll', () => {
-  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
-  prog.style.width = pct + '%';
-});
-
-// ── NAV ──
+// NAV scroll
 const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => {
-  nav.classList.toggle('on', window.scrollY > 50);
-});
+window.addEventListener('scroll', () => nav.classList.toggle('on', scrollY > 60));
 
-// ── EMBER PARTICLES ──
-const cv = document.getElementById('cv');
-const ctx = cv.getContext('2d');
-let W, H;
-const resize = () => { W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; };
-resize();
-window.addEventListener('resize', resize);
-
-class Ember {
-  constructor(init) {
-    this.x = Math.random() * (W || 1440);
-    this.y = init ? Math.random() * (H || 900) : (H || 900) + 20;
-    this.r = Math.random() * 1.8 + .4;
-    this.vy = -(Math.random() * .7 + .25);
-    this.vx = (Math.random() - .5) * .3;
-    this.a = Math.random() * .55 + .08;
-    this.da = -(Math.random() * .0012 + .0006);
-    this.hue = 22 + Math.random() * 22;
-  }
-  tick() {
-    this.y += this.vy;
-    this.x += this.vx + Math.sin(this.y * .012) * .18;
-    this.a += this.da;
-    if (this.a <= 0 || this.y < -10) {
-      this.x = Math.random() * W;
-      this.y = H + 20;
-      this.a = Math.random() * .55 + .08;
-      this.da = -(Math.random() * .0012 + .0006);
-      this.vy = -(Math.random() * .7 + .25);
-    }
-  }
-  draw() {
-    ctx.save();
-    ctx.globalAlpha = this.a;
-    ctx.shadowBlur = 8; ctx.shadowColor = `hsl(${this.hue},90%,60%)`;
-    ctx.fillStyle = `hsl(${this.hue},90%,62%)`;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
-}
-
-const embers = Array.from({length: 90}, (_, i) => new Ember(true));
-(function loop() {
-  ctx.clearRect(0, 0, W, H);
-  embers.forEach(e => { e.tick(); e.draw(); });
-  requestAnimationFrame(loop);
-})();
-
-// ── SCROLL REVEAL ──
+// Scroll reveal
 const revEls = document.querySelectorAll('.rev');
-const obs = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('on'); });
-}, { threshold: .12 });
-revEls.forEach(el => obs.observe(el));
+new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('on'); });
+}, { threshold: .1 }).observe
+? (() => {
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('on'); });
+    }, { threshold: .1 });
+    revEls.forEach(el => obs.observe(el));
+  })()
+: revEls.forEach(el => el.classList.add('on'));
 
-// ── SMOOTH ANCHOR ──
-document.querySelectorAll('a[href^="#"]').forEach(a => {
-  a.addEventListener('click', e => {
-    const t = document.querySelector(a.getAttribute('href'));
-    if (t) { e.preventDefault(); t.scrollIntoView({behavior:'smooth'}); }
-  });
+// Parallax on hero
+window.addEventListener('scroll', () => {
+  const hero = document.querySelector('.hero-img');
+  if(hero) hero.style.transform = `translateY(${scrollY * .25}px)`;
 });
 </script>
 </body>
